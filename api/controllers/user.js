@@ -1,104 +1,81 @@
-const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose');
 
-const User = require("../models/user");
+const BaseController = require('./base');
 
 
-exports.all = (req, res, next) => {
-    User.find()
-        .select("email password _id")
-        .exec()
-        .then(user => {
-            res.status(200).json({
-                users: user,
+class UserController extends BaseController {
+    _checkAuth() {
+        if (this._isCheckAuthDisabled()) {
+            return;
+        }
+        super._checkAuth();
+    }
+
+    _isCheckAuthDisabled() {
+        // action names
+        const checkAuthDisabled = [ 'login', 'signup', 'all' ];
+        return this._action && checkAuthDisabled.includes(this._action);
+    }
+
+    async login() {
+        const user = await this._model.find({ email: this._body.email })
+            .exec();
+        if (user.length < 1) {
+            throw this.newError("A bejelentkezés nem sikerült", {
+                statusCode: 401,
             });
-        })
-        .catch(err => {
-            res.status(500).json({
-                error: err
-            });
-        });
-};
-
-exports.signup = (req, res, next) => {
-    User.find({email: req.body.email})
-        .exec()
-        .then(user => {
-            if (user.length >= 1) {
-                return res.status(409).json({
-                    message: "Az email létezik"
-                });
-            } else {
-                const hash = req.body.password_hash;
-                const user = new User({
-                    _id: new mongoose.Types.ObjectId(),
-                    email: req.body.email,
-                    password: hash
-                });
-                user.save()
-                    .then(result => {
-                        res.status(201).json({
-                            message: "A felhasználó létrehozva"
-                        });
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json({
-                            error: err
-                        });
-                    });
-            }
-        });
-};
-
-exports.login = (req, res, next) => {
-    User.find({email: req.body.email})
-        .exec()
-        .then(user => {
-            if (user.length < 1) {
-                return res.status(401).json({
-                    message: "A bejelentkezés nem sikerült"
-                });
-            }
-            if (user[0].password === req.body.password_hash) {
-                const token = jwt.sign({
-                        email: user[0].email,
-                        user_id: user[0]._id
-                    },
-                    process.env.JWT_KEY,
-                    {expiresIn: "1h"}
-                );
-                return res.status(200).json({
+        }
+        if (user[0].password === this._body.password_hash) {
+            const token = jwt.sign({
+                    email: user[0].email,
+                    user_id: user[0]._id
+                },
+                (process.env.JWT_KEY || 'asd'),
+                { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
+            );
+            return {
+                response: {
                     message: "A bejelentkezés sikerült (a tokent el kell menteni a header-be 'auth_token'-ként)",
-                    token: token
-                });
+                    token: token,
+                    success: true,
+                }
             }
-            res.status(401).json({
-                message: "A bejelentkezés nem sikerült"
-            });
+        }
+        throw this.newError("A bejelentkezés nem sikerült", {
+            statusCode: 401,
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-};
+    }
 
-exports.delete = (req, res, next) => {
-    User.remove({_id: req.params.userId})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: "A felhasználó törölve lett"
+    async signup() {
+        const user = this._model.find({ email: this._body.email })
+            .exec();
+        if (user.length >= 1) {
+            throw this.newError("Az email létezik", {
+                statusCode: 409,
+            })
+        } else {
+            const hash = this._body.password_hash;
+            const user = new this._model({
+                _id: new mongoose.Types.ObjectId(),
+                email: this._body.email,
+                password: hash
             });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-};
+            const result = await user.save();
+            return {
+                statusCode: 201,
+                response: {
+                    message: "A felhasználó létrehozva",
+                    success: true,
+                    data: result,
+                }
+            };
+        }
+    }
 
+    async all() {
+        return super._getAllRecords();
+    }
+}
 
+module.exports = UserController;

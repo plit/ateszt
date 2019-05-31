@@ -34,30 +34,31 @@ A komunikáció http protokolon történik a kliens és a backend között
 `auth_token`: login folyamat végén kapja meg a kliens a tokent ;s azt a tokent kell beállítani, hogy autentikálva legyen a következő kérés is
 
 ### Végpontok
-url felépítése: `http://[HOST]:[PORT]/api/[EGYÉB...]` pl.: http://localhost:3000/api/user/logi
+url felépítése: `http://[HOST]:[PORT]/api/[EGYÉB...]` pl.: http://localhost:3000/api/user/0/login
 #### CRUD
-Autentikáció szükséges a crudon keresztül történő komunikációhoz
-A model név és a model felépítése az `api/models` alatt van
+Autentikáció szükséges a crudon keresztül történő komunikációhoz (kivételeket lent lehet megtaálni).
+
+A felépítése az `api/models` alatt van
 
 > Recordok/record lekérdezés (Read)
 
 method: `GET` 
 
-url: `api/table/[MODEL_NEVE]/[ID]`
-- a model neve kötelező
+url: `api/[NEV]/[ID]`
+- a név kötelező (model név)
 - az id opcionálni, ha meg van adva akkor csak azt az egy rekordot adja vissza
 
 __válasz__:
 
 ha nincs megadva id akkor:
-```json
+```
 {
   count: 12,
   data: [....]
 }
 ```
 ha van id akkor:
-```json
+```
 {
   data: {...}
 }
@@ -69,12 +70,12 @@ ha van id akkor:
 
 method: `POST` 
 
-url: `api/table/[MODEL_NEVE]`
-- a model neve kötelező
+url: `api/[NEV]`
+- a név kötelező
 
 __válasz__:
 
-```json
+```
 {
    success: true,
    data: {...}
@@ -85,12 +86,12 @@ __válasz__:
 
 method: `PUT` 
 
-url: `api/table/[MODEL_NEVE]/[ID]`
-- a model neve kötelező
+url: `api/[NEVE]/[ID]`
+- a név kötelező
 - az id is köelező
 __válasz__:
 
-```json
+```
 {
    success: true,
 }
@@ -100,12 +101,12 @@ __válasz__:
 
 method: `DELETE` 
 
-url: `api/table/[MODEL_NEVE]/[ID]`
-- a model neve kötelező
+url: `api/[NEVE]/[ID]`
+- a név kötelező
 - az id is köelező
 __válasz__:
 
-```json
+```
 {
    success: true,
 }
@@ -114,14 +115,17 @@ __válasz__:
 
 Ha hiba történik akkor minden esetben igy néz ki a válasz:
 
-```json
+```
 {
     error: err.message,
 }
 ```
-#### Egyéb
-Az összes felhasználót lekérdezi: `GET` `api/user/all`
-Bejelentkezés `POST` `api/user/login` 
+#### Kivételek 
+Nem kell autentikáció
+
+Az összes felhasználót lekérdezi: `GET` `api/user/0/all`
+
+Bejelentkezés `POST` `api/user/0/login` 
 ````json
 {
 	"email": "plit2@c2.hu",
@@ -130,14 +134,12 @@ Bejelentkezés `POST` `api/user/login`
 ````
 `password_hash` - a kliens oldalon történik a jelszó átalakítása ez biztonségi szmpont végett javasolt
 
-Új felhasználó létrehozása: `POST` `api/user/signup`
+Új felhasználó létrehozása: `POST` `api/user/0/signup`
 ````json
 {
 	"email": "plit234@c2.hu",
 	"password_hash": "asd"
 }
 ````
-Felhasználó törlése: `DELETE` `api/user/[ID]` - autentikáció kell hozzá
-
 
 A végpontok tesztelhetőek például `Postman` segítségével.

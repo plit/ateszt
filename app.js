@@ -3,7 +3,6 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const userRoutes = require('./api/routers/user');
 const tableRoutes = require('./api/routers/table');
 
 mongoose.connect(
@@ -24,8 +23,10 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-app.use("/api/user", userRoutes);
-app.use("/api/table", tableRoutes);
+app.use("/api", tableRoutes);
+
+app.use(express.static('public'));
+
 
 app.use((req, res, next) => {
     const error = new Error("Not found");

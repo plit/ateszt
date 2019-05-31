@@ -1,6 +1,7 @@
 {
   "env": {
     "MONGO_PW": "asd123",
-    "JWT_KEY": "asd123"
+    "JWT_KEY": "asd123",
+    "JWT_EXPIRES_IN": "1d"
   }
 }
