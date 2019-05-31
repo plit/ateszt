@@ -3,7 +3,7 @@
 ## Telepítés
 A forráskód letöltése git segítségével:
 ```bash
-git clone 
+git clone https://github.com/plit/ateszt.git
 ```
 A forráskód mppájába lépés:
 ```bash
@@ -14,7 +14,7 @@ npm modulok telepítése:
 npm install
 ```
 ## Szerver indítása
-dev szerver indítása mongose segitsegevel:
+A dev szerver indítása nodemon segitsegevel:
 ```bash
 npm run dev
 ```
@@ -31,13 +31,14 @@ A komunikáció http protokolon történik a kliens és a backend között
 #### Header:
 `Content-Type`:`application/json`
 
-`auth_token`: login folyamat végén kapja meg a kliens a tokent ;s azt a tokent kell beállítani, hogy autentikálva legyen a következő kérés is
+`auth_token`: login folyamat végén kapja meg a kliens a tokent és azt a tokent kell beállítani, hogy autentikálva legyen a következő kérés is
 
 ### Végpontok
 url felépítése: `http://[HOST]:[PORT]/api/[EGYÉB...]` pl.: http://localhost:3000/api/user/logi
 #### CRUD
-Autentikáció szükséges a crudon keresztül történő komunikációhoz
-A model név és a model felépítése az `api/models` alatt van
+Autentikáció szükséges a crudon keresztül történő komunikációhoz.
+
+A model név és a model felépítése az `api/models` alatt van.
 
 > Recordok/record lekérdezés (Read)
 
@@ -47,17 +48,18 @@ url: `api/table/[MODEL_NEVE]/[ID]`
 - a model neve kötelező
 - az id opcionálni, ha meg van adva akkor csak azt az egy rekordot adja vissza
 
+
 __válasz__:
 
 ha nincs megadva id akkor:
-```json
+```
 {
   count: 12,
   data: [....]
 }
 ```
 ha van id akkor:
-```json
+```
 {
   data: {...}
 }
@@ -72,9 +74,10 @@ method: `POST`
 url: `api/table/[MODEL_NEVE]`
 - a model neve kötelező
 
+
 __válasz__:
 
-```json
+```
 {
    success: true,
    data: {...}
@@ -87,10 +90,12 @@ method: `PUT`
 
 url: `api/table/[MODEL_NEVE]/[ID]`
 - a model neve kötelező
-- az id is köelező
+- az id is kötelező
+
+
 __válasz__:
 
-```json
+```
 {
    success: true,
 }
@@ -102,10 +107,12 @@ method: `DELETE`
 
 url: `api/table/[MODEL_NEVE]/[ID]`
 - a model neve kötelező
-- az id is köelező
+- az id is kötelező
+
+
 __válasz__:
 
-```json
+```
 {
    success: true,
 }
@@ -114,13 +121,16 @@ __válasz__:
 
 Ha hiba történik akkor minden esetben igy néz ki a válasz:
 
-```json
+```
 {
     error: err.message,
 }
 ```
+
 #### Egyéb
+
 Az összes felhasználót lekérdezi: `GET` `api/user/all`
+
 Bejelentkezés `POST` `api/user/login` 
 ````json
 {
@@ -137,6 +147,7 @@ Bejelentkezés `POST` `api/user/login`
 	"password_hash": "asd"
 }
 ````
+
 Felhasználó törlése: `DELETE` `api/user/[ID]` - autentikáció kell hozzá
 
 
