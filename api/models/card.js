@@ -17,10 +17,11 @@ const cardSchema = mongoose.Schema({
         required: true,
         ref: 'User',
     },
-    title: {type: String, default: '', required: true},
-    order: {type: Number, default: 1},
-    dt_created: {type: Date, default: new Date()},
-    dt_deadline: {type: Date}
+    title: { type: String, default: '', required: true },
+    description: { type: String, default: '' },
+    order: { type: Number, default: 1 },
+    dt_created: { type: Date, default: new Date() },
+    dt_deadline: { type: Date }
 });
 
 module.exports = mongoose.model('Card', cardSchema);

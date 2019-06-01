@@ -34,11 +34,20 @@ A komunikáció http protokolon történik a kliens és a backend között
 `auth_token`: login folyamat végén kapja meg a kliens a tokent ;s azt a tokent kell beállítani, hogy autentikálva legyen a következő kérés is
 
 ### Végpontok
-url felépítése: `http://[HOST]:[PORT]/api/[EGYÉB...]` pl.: http://localhost:3000/api/user/0/login
+Az url felépítése: `http://[HOST]:[PORT]/api/[NÉV]/[ID]/[ACTION]` pl.: http://localhost:3000/api/user/0/login
+
+Az ID és az ACTION opcionális
 #### CRUD
 Autentikáció szükséges a crudon keresztül történő komunikációhoz (kivételeket lent lehet megtaálni).
 
 A felépítése az `api/models` alatt van
+
+|Adatok kezelése|Metodus|
+|---|---|
+|Létrehozás (Create)|POST|
+|Lekérdezés (Read)|GET|
+|Módosítás (Update)|PUT|
+|Törlés (Delete)|DELETE|
 
 > Recordok/record lekérdezés (Read)
 
@@ -141,5 +150,38 @@ Bejelentkezés `POST` `api/user/0/login`
 	"password_hash": "asd"
 }
 ````
+
+### Komunikációs adatok
+user
+
+| Oszlop| Tipus  | Kötelező | Leirás | Alapértelemzett érték|
+|---|---|---|---|---|
+| email | String |  igen |A felhasznaló email cime||
+| password_hash| String  | igen| a felhasznló hashelt jelszava ||
+
+board
+
+| Oszlop| Tipus | Kötelező | Leirás| Alapértelemzett érték|
+|---|---|---|---|---|
+| name| String | nem| A board neve | ''|
+
+task
+
+| Oszlop| Tipus | Kötelező | Leirás| Alapértelemzett érték|
+|---|---|---|---|---|
+| board_id| id| igen| id a board táblából | |
+| name| String | nem| A board neve | ''|
+
+card
+
+| Oszlop| Tipus | Kötelező | Leirás| Alapértelemzett érték|
+|---|---|---|---|---|
+| task_id| id| igen| id a task táblából | |
+| assigned_user_id| id| igen| id a user táblából, hozzárendelt szemény | |
+| title | String | igen| Cím | ''|
+| description| String | nem| Leírás | ''|
+| order| Number| nem| Sorrend| 1|
+| dt_deadline| Date| nem| Vállalt határidő | |
+
 
 A végpontok tesztelhetőek például `Postman` segítségével.
